@@ -5,6 +5,11 @@
 
 ---
 
+## 🌟 公開URL
+👉 **[SARA's クリスタル星占いを遊ぶ（GitHub Pages）](https://yuki5321.github.io/sara-crystal-fortune/)**
+
+---
+
 ## 🌟 特徴とこだわり
 
 ### 1. 「明るくかわいいSARAワールド」デザイン

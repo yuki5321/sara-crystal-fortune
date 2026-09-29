@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SARA's クリスタル星占い 🔮✨ 放課後のお守りメッセージ</title>
+  <meta name="description" content="高学年〜中高生の女の子向け、明るく透明感のある夢かわいいWeb占いツール。今日の運勢と放課後のお守りメッセージ、守護壁紙をお届けします。">
+
+  <!-- Google Fonts: Zen Maru Gothic (丸ゴシック) & Quicksand -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ----------------------------------------------------
+       デザインシステム＆カラーパレット
+       明るく澄んだ「ミルキーラベンダー×パステルピンク×星屑」
+    ---------------------------------------------------- */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f3e8ff 0%, #fae8ff 35%, #e0e7ff 70%, #ede9fe 100%);
+      --glass-bg: rgba(255, 255, 255, 0.78);
+      --glass-border: 2px solid rgba(216, 180, 254, 0.65);
+      --glass-shadow: 0 14px 34px rgba(168, 85, 247, 0.12), 0 2px 10px rgba(255, 255, 255, 0.9) inset;
+      --card-radius: 28px;
+      --candy-btn-bg: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      --candy-btn-shadow: 0 6px 20px rgba(236, 72, 153, 0.35);
+      
+      --text-main: #3b0764;       /* 視認性抜群のディープパープル */
+      --text-sub: #6b21a8;        /* アクセントパープル */
+      --text-body: #4c1d95;       /* 本文用パープル */
+      --text-muted: #7e22ce;      /* 補足用 */
+      --accent-pink: #ec4899;
+      --accent-purple: #a855f7;
+      --font-rounded: 'Zen Maru Gothic', sans-serif;
+      --font-en: 'Quicksand', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      font-family: var(--font-rounded);
+      color: var(--text-body);
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 12px 60px;
+    }
+
+    /* 背景アニメーション：キラキラ星屑＆パステルシャボン玉 */
+    .bg-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.85), rgba(244, 114, 182, 0.28) 50%, rgba(192, 132, 252, 0.25) 80%, rgba(255, 255, 255, 0.45) 100%);
+      box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.7), 0 0 16px rgba(236, 72, 153, 0.15);
+      animation: floatUp 15s infinite ease-in-out;
+      backdrop-filter: blur(1px);
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(110vh) scale(0.6) rotate(0deg);
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.75;
+      }
+      80% {
+        opacity: 0.75;
+      }
+      100% {
+        transform: translateY(-15vh) scale(1.1) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .sparkle-star {
+      position: absolute;
+      color: #f472b6;
+      font-size: 14px;
+      user-select: none;
+      pointer-events: none;
+      animation: twinkle 3s infinite ease-in-out alternate;
+      text-shadow: 0 0 8px rgba(236, 72, 153, 0.6);
+    }
+
+    @keyframes twinkle {
+      0% { transform: scale(0.3) rotate(0deg); opacity: 0.15; }
+      50% { transform: scale(1.2) rotate(45deg); opacity: 0.95; }
+      100% { transform: scale(0.5) rotate(90deg); opacity: 0.25; }
+    }
+
+    /* アプリ全体コンテナ（スマホ最適化 480px） */
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: 0 auto;
+    }
+
+    /* ----------------------------------------------------
+       ヘッダー ＆ Lo-Fi BGM コントロール
+    ---------------------------------------------------- */
+    .app-header {
+      position: relative;
+      text-align: center;
+      padding: 14px 10px 6px;
+    }
+
+    .lofi-toggle-btn {
+      position: absolute;
+      top: 0;
+      right: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1.5px solid rgba(216, 180, 254, 0.85);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.15);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .lofi-toggle-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 18px rgba(168, 85, 247, 0.25);
+    }
+
+    .lofi-toggle-btn.playing {
+      background: linear-gradient(135deg, #fbcfe8 0%, #e9d5ff 100%);
+      color: #9333ea;
+      border-color: #d8b4fe;
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(236, 72, 153, 0.3); }
+      50% { box-shadow: 0 0 18px rgba(168, 85, 247, 0.5); }
+    }
+
+    .wave-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 12px;
+    }
+
+    .wave-bar {
+      width: 2.5px;
+      height: 4px;
+      background-color: var(--accent-pink);
+      border-radius: 2px;
+      transition: height 0.2s;
+    }
+
+    .lofi-toggle-btn.playing .wave-bar:nth-child(1) { animation: wave 0.8s infinite ease-in-out; }
+    .lofi-toggle-btn.playing .wave-bar:nth-child(2) { animation: wave 1.1s infinite ease-in-out 0.2s; }
+    .lofi-toggle-btn.playing .wave-bar:nth-child(3) { animation: wave 0.9s infinite ease-in-out 0.4s; }
+
+    @keyframes wave {
+      0%, 100% { height: 3px; }
+      50% { height: 12px; }
+    }
+
+    .sub-brand {
+      display: inline-block;
+      font-family: var(--font-en);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #a855f7;
+      background: rgba(255, 255, 255, 0.75);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(216, 180, 254, 0.6);
+      box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1);
+    }
+
+    .main-title {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: var(--text-main);
+      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.95), 0 4px 18px rgba(236, 72, 153, 0.2);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .title-crystal {
+      font-size: 28px;
+      animation: floatRotate 4s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes floatRotate {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(8deg); }
+    }
+
+    .tagline {
+      font-size: 13.5px;
+      color: var(--text-sub);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    /* ----------------------------------------------------
+       カードUI（ぷっくりフロストガラス）
+    ---------------------------------------------------- */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: var(--card-radius);
+      padding: 22px 20px;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* ----------------------------------------------------
+       入力ステップ
+    ---------------------------------------------------- */
+    .form-group-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .date-select-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .cute-select {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid rgba(216, 180, 254, 0.85);
+      border-radius: 16px;
+      padding: 10px 24px 10px 12px;
+      font-family: var(--font-rounded);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(168, 85, 247, 0.08);
+      transition: all 0.2s ease;
+    }
+
+    .cute-select:focus {
+      border-color: #ec4899;
+      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
+    }
+
+    .select-icon {
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 10px;
+      color: #a855f7;
+    }
+
+    .zodiac-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #7c3aed;
+      background: rgba(243, 232, 255, 0.7);
+      border-radius: 14px;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      border: 1.5px dashed rgba(192, 132, 252, 0.7);
+    }
+
+    .time-select-row {
+      margin-bottom: 22px;
+    }
+
+    .time-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .time-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .time-option-chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1.5px solid rgba(216, 180, 254, 0.75);
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .time-option-chip:hover {
+      background: #faf5ff;
+      border-color: #c084fc;
+    }
+
+    .time-option-chip.selected {
+      background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%);
+      border-color: #ec4899;
+      color: #9d174d;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+    }
+
+    /* ぷっくりツヤ感キャンディボタン */
+    .candy-btn {
+      width: 100%;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      background: var(--candy-btn-bg);
+      color: #ffffff;
+      font-family: var(--font-rounded);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      border-radius: 9999px;
+      padding: 15px 24px;
+      box-shadow: var(--candy-btn-shadow);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* キャンディボタンのツヤ感ハイライト */
+    .candy-btn::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 7%;
+      width: 86%;
+      height: 42%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+
+    .candy-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(236, 72, 153, 0.45);
+    }
+
+    .candy-btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    }
+
+    /* ----------------------------------------------------
+       占い中ローディング演出（クリスタル召喚）
+    ---------------------------------------------------- */
+    .crystal-loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .crystal-orb {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f472b6 40%, #a855f7 85%, #6366f1 100%);
+      box-shadow: 0 0 35px rgba(236, 72, 153, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.85);
+      animation: pulseOrb 1.5s infinite ease-in-out alternate;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    @keyframes pulseOrb {
+      0% { transform: scale(0.9) rotate(0deg); box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+      100% { transform: scale(1.1) rotate(180deg); box-shadow: 0 0 45px rgba(236, 72, 153, 0.8); }
+    }
+
+    .crystal-orb::after {
+      content: '✦';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 34px;
+      animation: twinkle 1s infinite alternate;
+    }
+
+    .loading-text {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .loading-subtext {
+      font-size: 13px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    /* ----------------------------------------------------
+       占い結果表示エリア（しいたけ占い風・心に刺さる3層）
+    ---------------------------------------------------- */
+    .result-section {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 結果ヘッダー */
+    .result-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #fbcfe8 0%, #e9d5ff 100%);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #86198f;
+    }
+
+    .time-aura-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid rgba(216, 180, 254, 0.8);
+      padding: 3.5px 12px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #7c3aed;
+      box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1);
+    }
+
+    .result-title {
+      font-size: 21px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.38;
+      margin-bottom: 6px;
+    }
+
+    /* ① 守護クリスタル＆オーラカラー カード */
+    .crystal-hero-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 245, 255, 0.9) 100%);
+      border: 2px solid rgba(232, 121, 249, 0.55);
+      border-radius: 22px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(168, 85, 247, 0.1);
+    }
+
+    .crystal-badge-circle {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff 0%, #fbcfe8 45%, #c084fc 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25), inset 0 2px 6px rgba(255, 255, 255, 0.85);
+      position: relative;
+    }
+
+    .crystal-meta-info {
+      flex: 1;
+    }
+
+    .crystal-name {
+      font-size: 17.5px;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+
+    .crystal-quote {
+      font-size: 12px;
+      font-weight: 800;
+      color: #9333ea;
+      margin-bottom: 6px;
+    }
+
+    .aura-color-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #374151;
+      background: #ffffff;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(216, 180, 254, 0.6);
+    }
+
+    .aura-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* オーラメーター */
+    .aura-meters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 14px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 6px;
+      border: 1px solid rgba(216, 180, 254, 0.5);
+    }
+
+    .meter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meter-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text-body);
+    }
+
+    .meter-bar-bg {
+      height: 6.5px;
+      background: #e2e8f0;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .meter-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #c084fc, #ec4899);
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ②＆③ 心境のささやき ＆ 星の優しい処方箋 */
+    .reading-box {
+      position: relative;
+      margin-top: 14px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 20px;
+      border-left: 4.5px solid #c084fc;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.08);
+    }
+
+    .reading-box.rx-box {
+      border-left-color: #ec4899;
+      background: linear-gradient(135deg, rgba(255, 245, 248, 0.92) 0%, rgba(255, 255, 255, 0.95) 100%);
+    }
+
+    .reading-box-title {
+      font-size: 14.5px;
+      font-weight: 900;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .reading-box-text {
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: #374151;
+      font-weight: 500;
+      white-space: pre-line;
+    }
+
+    .reading-box-text strong {
+      color: #86198f;
+      font-weight: 800;
+      background: linear-gradient(180deg, transparent 65%, #fbcfe8 65%);
+    }
+
+    /* ④ 放課後ラッキーアクション＆アイテム */
+    .lucky-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .lucky-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1.5px solid rgba(216, 180, 254, 0.65);
+      border-radius: 18px;
+      padding: 12px 10px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(168, 85, 247, 0.06);
+    }
+
+    .lucky-card-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .lucky-card-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #9333ea;
+      margin-bottom: 3px;
+    }
+
+    .lucky-card-val {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+
+    /* ----------------------------------------------------
+       今日のラッキーお守り壁紙（スマホモックアップ風）
+    ---------------------------------------------------- */
+    .wallpaper-section {
+      text-align: center;
+    }
+
+    .wallpaper-title-group {
+      margin-bottom: 14px;
+    }
+
+    .wallpaper-badge {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #ec4899;
+      background: #fdf2f8;
+      border: 1px solid #fbcfe8;
+      padding: 3px 14px;
+      border-radius: 9999px;
+      margin-bottom: 6px;
+    }
+
+    .wallpaper-heading {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    /* スマホモックアップフレーム */
+    .phone-mockup-wrapper {
+      position: relative;
+      width: 250px;
+      height: 480px;
+      margin: 0 auto 16px;
+      background: #ffffff;
+      border-radius: 40px;
+      padding: 10px;
+      box-shadow: 0 20px 45px rgba(168, 85, 247, 0.25), 0 0 0 5px rgba(255, 255, 255, 0.8), 0 0 0 7px rgba(216, 180, 254, 0.7);
+      transition: transform 0.3s ease;
+    }
+
+    .phone-mockup-wrapper:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 32px;
+      overflow: hidden;
+      position: relative;
+      background: #ede9fe;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* スマホ画面上の上部ノッチ/ダイナミックアイランド */
+    .phone-notch {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 68px;
+      height: 18px;
+      background: rgba(30, 27, 75, 0.88);
+      border-radius: 12px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notch-camera {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .phone-clock-overlay {
+      position: absolute;
+      top: 36px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+
+    .phone-date {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      opacity: 0.95;
+    }
+
+    .phone-time {
+      font-family: var(--font-en);
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    /* プレビュー画像 */
+    .wallpaper-preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .wallpaper-desc {
+      font-size: 12.5px;
+      color: #6b7280;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    /* 壁紙カード情報ボックス */
+    .wallpaper-info-card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid rgba(216, 180, 254, 0.7);
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.08);
+      text-align: center;
+    }
+
+    .wallpaper-card-name {
+      font-size: 14.5px;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .wallpaper-card-sub {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #9333ea;
+      margin-bottom: 4px;
+    }
+
+    .wallpaper-card-msg {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4b5563;
+      line-height: 1.45;
+    }
+
+    .wallpaper-action-row {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 9999px;
+      font-family: var(--font-rounded);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.45);
+    }
+
+
+
+    .wallpaper-note {
+      font-size: 11.5px;
+      color: #9333ea;
+      font-weight: 700;
+      margin-top: 12px;
+      line-height: 1.5;
+      background: rgba(243, 232, 255, 0.65);
+      padding: 7px 14px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    /* ----------------------------------------------------
+       リンク＆ソーシャル導線エリア（一番下）
+    ---------------------------------------------------- */
+    .social-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .social-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid rgba(216, 180, 254, 0.75);
+      border-radius: 20px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 13.5px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.08);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      border-color: #c084fc;
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(168, 85, 247, 0.16);
+    }
+
+    .social-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .social-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: #f3e8ff;
+    }
+
+    .social-arrow {
+      color: #c084fc;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    /* 再占いボタン */
+    .retry-btn-box {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .retry-link {
+      color: #9333ea;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* フッター */
+    .app-footer {
+      text-align: center;
+      font-size: 11.5px;
+      color: #9ca3af;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ----------------------------------------------------
+       トースト通知
+    ---------------------------------------------------- */
+    .toast-popup {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(30, 27, 75, 0.94);
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 800;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-popup.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 背景アニメーション（シャボン玉＆星屑） -->
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <!-- アプリメインコンテナ -->
+  <div class="app-container">
+
+    <!-- タイトルヘッダー -->
+    <header class="app-header">
+      <!-- BGM トグルボタン -->
+      <button class="lofi-toggle-btn" id="lofiToggleBtn" title="放課後Lo-Fi BGM">
+        <span id="lofiIcon">🎧</span>
+        <span>放課後Lo-Fi</span>
+        <div class="wave-bars">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </button>
+
+      <div class="sub-brand">✦ CRYSTAL & STARLIGHT FORTUNE ✦</div>
+      <h1 class="main-title">
+        <span class="title-crystal">🔮</span>
+        <span>SARA's クリスタル星占い</span>
+        <span class="title-crystal" style="animation-delay: -2s;">✨</span>
+      </h1>
+      <p class="tagline">今日の運勢と、放課後のお守りメッセージをお届け 🫧</p>
+    </header>
+
+    <!-- 入力カード -->
+    <section class="glass-card" id="inputCard">
+      <div class="form-group-title">
+        <span>🎂</span> あなたの生年月日を教えてね
+      </div>
+      
+      <div class="date-select-row">
+        <!-- 年 -->
+        <div class="select-wrapper">
+          <select class="cute-select" id="birthYear"></select>
+          <span class="select-icon">▼</span>
+        </div>
+        <!-- 月 -->
+        <div class="select-wrapper">
+          <select class="cute-select" id="birthMonth"></select>
+          <span class="select-icon">▼</span>
+        </div>
+        <!-- 日 -->
+        <div class="select-wrapper">
+          <select class="cute-select" id="birthDay"></select>
+          <span class="select-icon">▼</span>
+        </div>
+      </div>
+
+      <!-- 星座のミニ表示 -->
+      <div class="zodiac-indicator" id="zodiacIndicator">
+        <span>✨</span> <span id="zodiacText">あなたの星座を計算中...</span>
+      </div>
+
+      <!-- 生まれた時間（わからなくてもOK） -->
+      <div class="time-select-row">
+        <label class="time-label">⏰ 生まれた時間（わからなくてもOK！）</label>
+        <div class="time-options" id="timeOptions">
+          <div class="time-option-chip selected" data-time="unknown">
+            <span>🌙</span> わからない / 秘密
+          </div>
+          <div class="time-option-chip" data-time="morning">
+            <span>☀️</span> 朝 (6:00〜)
+          </div>
+          <div class="time-option-chip" data-time="day">
+            <span>☁️</span> 昼 (12:00〜)
+          </div>
+          <div class="time-option-chip" data-time="night">
+            <span>⭐️</span> 夜 (18:00〜)
+          </div>
+        </div>
+      </div>
+
+      <!-- 占うボタン -->
+      <button class="candy-btn" id="fortuneBtn">
+        <span>✦</span> 今日のハッピーを占う！ <span>✦</span>
+      </button>
+    </section>
+
+    <!-- 占い中ローディング演出 -->
+    <div class="crystal-loading" id="crystalLoading">
+      <div class="crystal-orb"></div>
+      <div class="loading-text">星屑とクリスタルを集めています...✨</div>
+      <div class="loading-subtext">今日のあなたへ、大切なお守り言葉を紡ぎ中🫧</div>
+    </div>
+
+    <!-- 占い結果エリア（3層メッセージ＋ラッキーアイテム） -->
+    <div class="result-section" id="resultSection">
+      
+      <!-- メイン結果カード -->
+      <section class="glass-card">
+        <div class="result-header-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+          <div class="result-header-badge">
+            <span>✧</span> 今日の星のメッセージ <span>✧</span>
+          </div>
+          <div class="time-aura-badge" id="timeAuraBadge">
+            <span>☀️</span> 朝生まれの守護光
+          </div>
+        </div>
+        <h2 class="result-title" id="resultMainHeadline">やさしい光に包まれて、本来の輝きが戻ってくる日</h2>
+
+        <!-- ① 守護クリスタル＆オーラカラー -->
+        <div class="crystal-hero-box">
+          <div class="crystal-badge-circle" id="crystalBadgeEmoji">💎</div>
+          <div class="crystal-meta-info">
+            <div class="crystal-name" id="crystalName">アメジスト</div>
+            <div class="crystal-quote" id="crystalQuote">「心のざわめきを静め、直感を澄ます」</div>
+            <div class="aura-color-tag">
+              <span class="aura-dot" id="auraDot" style="background: #a855f7;"></span>
+              <span id="auraColorName">ミルキーラベンダー & パステルミント</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 今日のオーラメーター -->
+        <div class="aura-meters">
+          <div class="meter-item">
+            <div class="meter-label-row">
+              <span>透明感オーラ</span>
+              <span id="meterVal1">92%</span>
+            </div>
+            <div class="meter-bar-bg">
+              <div class="meter-bar-fill" id="meterBar1"></div>
+            </div>
+          </div>
+          <div class="meter-item">
+            <div class="meter-label-row">
+              <span>優しさ・共感力</span>
+              <span id="meterVal2">88%</span>
+            </div>
+            <div class="meter-bar-bg">
+              <div class="meter-bar-fill" id="meterBar2"></div>
+            </div>
+          </div>
+          <div class="meter-item">
+            <div class="meter-label-row">
+              <span>直感・ひらめき</span>
+              <span id="meterVal3">95%</span>
+            </div>
+            <div class="meter-bar-bg">
+              <div class="meter-bar-fill" id="meterBar3"></div>
+            </div>
+          </div>
+          <div class="meter-item">
+            <div class="meter-label-row">
+              <span>マイペース度</span>
+              <span id="meterVal4">84%</span>
+            </div>
+            <div class="meter-bar-bg">
+              <div class="meter-bar-fill" id="meterBar4"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② 今のあなたの心境・星のささやき -->
+        <div class="reading-box">
+          <div class="reading-box-title">
+            <span>💭</span> 今のあなたの心境・星のささやき
+          </div>
+          <p class="reading-box-text" id="whisperText">
+            周りの友達やグループの空気を敏感に察知して、ちょっとだけ気疲れしちゃっていませんか？「ちゃんとしなきゃ」「変に思われてないかな」って、無意識に頑張りすぎているサインが出ています。
+          </p>
+        </div>
+
+        <!-- ③ 星からの優しい処方箋 -->
+        <div class="reading-box rx-box">
+          <div class="reading-box-title">
+            <span>💌</span> 星からの優しい処方箋
+          </div>
+          <p class="reading-box-text" id="prescriptionText">
+            無理にテンションを上げてみんなに合わせなくて大丈夫！今日は<strong>「自分のペースで深呼吸する日」</strong>。誰かの期待に応える前に、あなたが一番リラックスできる時間を作ってあげてね。
+          </p>
+        </div>
+
+        <!-- ④ 放課後ラッキーアクション＆アイテム -->
+        <div class="lucky-grid">
+          <div class="lucky-card">
+            <div class="lucky-card-icon" id="actionIcon">🎧</div>
+            <div class="lucky-card-label">放課後ラッキーアクション</div>
+            <div class="lucky-card-val" id="luckyAction">帰り道にお気に入りの曲を1曲じっくり聴く</div>
+          </div>
+          <div class="lucky-card">
+            <div class="lucky-card-icon" id="itemIcon">🫧</div>
+            <div class="lucky-card-label">お守りラッキーアイテム</div>
+            <div class="lucky-card-val" id="luckyItem">ピーチの香りのリップバーム</div>
+          </div>
+          <div class="lucky-card">
+            <div class="lucky-card-icon" id="spotIcon">🪟</div>
+            <div class="lucky-card-label">ハッピースポット</div>
+            <div class="lucky-card-val" id="luckySpot">夕焼けが見える窓際の席</div>
+          </div>
+          <div class="lucky-card">
+            <div class="lucky-card-icon" id="colorIcon">🎨</div>
+            <div class="lucky-card-label">ラッキーナンバー＆カラー</div>
+            <div class="lucky-card-val" id="luckyKey">No. 7 / ラベンダー</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 今日のラッキーお守り壁紙（★ランダム1枚配布機能） -->
+      <section class="glass-card wallpaper-section">
+        <div class="wallpaper-title-group">
+          <span class="wallpaper-badge">★ SPECIAL LUCKY GIFT ★</span>
+          <h3 class="wallpaper-heading">💎 今日のラッキーお守り壁紙</h3>
+          <p class="wallpaper-desc">占うたびに星が届けてくれる、あなただけの限定スマホ壁紙です✨</p>
+        </div>
+
+        <!-- スマホモックアップ風フレーム -->
+        <div class="phone-mockup-wrapper">
+          <div class="phone-screen">
+            <div class="phone-notch">
+              <div class="notch-camera"></div>
+            </div>
+            <div class="phone-clock-overlay">
+              <div class="phone-date" id="phoneMockupDate">9月28日 月曜日</div>
+              <div class="phone-time" id="phoneMockupTime">16:40</div>
+            </div>
+            <!-- 生成・選択された壁紙のプレビュー画像 -->
+            <img class="wallpaper-preview-img" id="wallpaperPreviewImg" src="assets/wallpapers/wallpaper1_phone.jpg" alt="今日の守護壁紙プレビュー" />
+          </div>
+        </div>
+
+        <!-- 壁紙の詳細情報カード -->
+        <div class="wallpaper-info-card">
+          <div class="wallpaper-card-name" id="wallpaperCardName">Y2K クリスタルガラケー & スターチャーム</div>
+          <div class="wallpaper-card-sub" id="wallpaperCardSub">懐かしくて新しい、きらめくピンクの魔法</div>
+          <div class="wallpaper-card-msg" id="wallpaperCardMsg">「あなたに届くすべての言葉が、優しい光でありますように✨」</div>
+        </div>
+
+        <div class="wallpaper-action-row">
+          <button class="download-btn" id="downloadWallpaperBtn">
+            <span>💎</span> 今日の壁紙を高画質で保存する
+          </button>
+        </div>
+
+        <p class="wallpaper-note">
+          ※スマホのロック画面に設定すると、雑音から心を守るお守りになるよ✨<br>
+          （画像を長押しして保存することもできます）
+        </p>
+      </section>
+
+      <!-- リンク＆ソーシャル導線エリア（一番下） -->
+      <section class="glass-card">
+        <div class="form-group-title" style="margin-bottom: 14px; justify-content: center; font-size: 15.5px;">
+          <span>🫧</span> 放課後をもっと可愛くするヒミツ <span>🫧</span>
+        </div>
+        
+        <div class="social-section">
+          <!-- note -->
+          <a class="social-btn" id="noteLink" href="https://note.com/sara_wallpaper68" target="_blank" rel="noopener noreferrer">
+            <div class="social-left">
+              <span class="social-icon-badge">🌙</span>
+              <span>お守り壁紙をあつめる（note）</span>
+            </div>
+            <span class="social-arrow">→</span>
+          </a>
+
+          <!-- TikTok -->
+          <a class="social-btn" id="tiktokLink" href="https://www.tiktok.com/@sara_wallpaper68" target="_blank" rel="noopener noreferrer">
+            <div class="social-left">
+              <span class="social-icon-badge">🎵</span>
+              <span>TikTokできらちゅる壁紙を先取りする</span>
+            </div>
+            <span class="social-arrow">→</span>
+          </a>
+
+          <!-- YouTube -->
+          <a class="social-btn" id="youtubeLink" href="https://www.youtube.com/@sara_wallpaper68" target="_blank" rel="noopener noreferrer">
+            <div class="social-left">
+              <span class="social-icon-badge">🎧</span>
+              <span>勉強や寝る前に…放課後Lo-Fiを聴く</span>
+            </div>
+            <span class="social-arrow">→</span>
+          </a>
+
+          <!-- シェアボタン -->
+          <button class="social-btn" id="shareBtn" style="border-color: #f472b6; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(254,242,242,0.92));">
+            <div class="social-left">
+              <span class="social-icon-badge" style="background: #fce7f3;">💌</span>
+              <span>友達にハッピーをおすそ分け（LINE / X）</span>
+            </div>
+            <span class="social-arrow" style="color: #ec4899;">Share</span>
+          </button>
+        </div>
+
+        <div class="retry-btn-box">
+          <span class="retry-link" id="retryLink"><span>↺</span> 友達の生年月日で占ってみる</span>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- フッター -->
+    <footer class="app-footer">
+      <p>© SARA's Crystal & Starlight Fortune. All sweet dreams reserved 🫧</p>
+    </footer>
+
+  </div>
+
+  <!-- トーストポップアップ -->
+  <div class="toast-popup" id="toastPopup">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">壁紙を保存しました！</span>
+  </div>
+
+  <script>
+    /* ====================================================
+       1. 星座判定データ ＆ 12星座完全網羅・占いデータベース
+       （しいたけ占い風：ティーンの心に深く刺さる温かい言葉）
+    ==================================================== */
+    const ZODIAC_LIST = [
+      { id: "capricorn",   name: "山羊座", symbol: "♑", startMonth: 12, startDay: 22, endMonth: 1, endDay: 19 },
+      { id: "aquarius",    name: "水瓶座", symbol: "♒", startMonth: 1, startDay: 20, endMonth: 2, endDay: 18 },
+      { id: "pisces",      name: "魚座",   symbol: "♓", startMonth: 2, startDay: 19, endMonth: 3, endDay: 20 },
+      { id: "aries",       name: "牡羊座", symbol: "♈", startMonth: 3, startDay: 21, endMonth: 4, endDay: 19 },
+      { id: "taurus",      name: "牡牛座", symbol: "♉", startMonth: 4, startDay: 20, endMonth: 5, endDay: 20 },
+      { id: "gemini",      name: "双子座", symbol: "♊", startMonth: 5, startDay: 21, endMonth: 6, endDay: 21 },
+      { id: "cancer",      name: "蟹座",   symbol: "♋", startMonth: 6, startDay: 22, endMonth: 7, endDay: 22 },
+      { id: "leo",         name: "獅子座", symbol: "♌", startMonth: 7, startDay: 23, endMonth: 8, endDay: 22 },
+      { id: "virgo",       name: "乙女座", symbol: "♍", startMonth: 8, startDay: 23, endMonth: 9, endDay: 22 },
+      { id: "libra",       name: "天秤座", symbol: "♎", startMonth: 9, startDay: 23, endMonth: 10, endDay: 23 },
+      { id: "scorpio",     name: "蠍座",   symbol: "♏", startMonth: 10, startDay: 24, endMonth: 11, endDay: 22 },
+      { id: "sagittarius", name: "射手座", symbol: "♐", startMonth: 11, startDay: 23, endMonth: 12, endDay: 21 }
+    ];
+
+    function getZodiac(month, day) {
+      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return ZODIAC_LIST[0];
+      if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return ZODIAC_LIST[1];
+      if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return ZODIAC_LIST[2];
+      if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return ZODIAC_LIST[3];
+      if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return ZODIAC_LIST[4];
+      if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return ZODIAC_LIST[5];
+      if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return ZODIAC_LIST[6];
+      if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return ZODIAC_LIST[7];
+      if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return ZODIAC_LIST[8];
+      if ((month === 9 && day >= 23) || (month === 10 && day <= 23)) return ZODIAC_LIST[9];
+      if ((month === 10 && day >= 24) || (month === 11 && day <= 22)) return ZODIAC_LIST[10];
+      if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return ZODIAC_LIST[11];
+      return ZODIAC_LIST[3];
+    }
+
+    // 12星座ごとの守護クリスタル＆深層心理メッセージ
+    const FORTUNE_DATABASE = {
+      aries: {
+        crystalName: "ピンクトパーズ & オーロラクォーツ",
+        crystalEmoji: "💖",
+        auraColorName: "チェリーピンク & アプリコット",
+        auraDot: "#f43f5e",
+        crystalQuote: "「ありのままの熱意と勇気が、誰かの心を照らす」",
+        headline: "全力で走ってきたあなたへ。ふっと肩の力を抜いていい日",
+        whisper: "「早くしなきゃ」「期待に応えなきゃ」と、いつも先頭で頑張って走っていませんか？\n本当はちょっと息切れしているのに、友達の前ではついつい元気キャラを演じてしまっているかも。あなたのそのまっすぐな一生懸命さは、誰よりもまぶしくて素敵です。",
+        prescription: "今日は<strong>「信号待ちで深呼吸するような、優しいひと休み」</strong>を大切にしてね。\n完璧を目指さなくても、あなたがそこに笑顔でいるだけで十分すぎるほど周りを明るくしています。放課後は好きなドリンクを買って、自分だけのテンポを味わってみて。",
+        action: "好きな炭酸ジュースやフルーツティーを飲む",
+        actionIcon: "🍹",
+        item: "ポップなカラーのヘアクリップ",
+        itemIcon: "🎀",
+        spot: "風が気持ちよく抜ける渡り廊下",
+        spotIcon: "🍃",
+        luckyKey: "No. 1 / フランボワーズピンク"
+      },
+      taurus: {
+        crystalName: "ローズクォーツ & ジェダイト",
+        crystalEmoji: "🌸",
+        auraColorName: "ストロベリーミルク & シフォンピスタチオ",
+        auraDot: "#ec4899",
+        crystalQuote: "「五感を癒やし、自分だけのお気に入りに包まれる」",
+        headline: "あなたのマイペースは最高の才能。ぬくもりを満たす日",
+        whisper: "周りのスピードが速すぎて「ついていけてないのかな」と不安になったり、急な予定変更に心がざわついていませんか？\nあなたは自分の『心地よさ』を丁寧に大事にできる人。周りの雑音に合わせて無理に急ぎ足になる必要なんて、少しもありません。",
+        prescription: "今日は<strong>「好きな肌触り・いい香りに包まれて自分を甘やかす日」</strong>！\nお気に入りのハンドクリームを塗ったり、ふかふかのタオルに顔をうずめるだけで心が満タンに復活します。自分のペースを愛してあげてね。",
+        action: "お気に入りの香りのリップを塗りなおす",
+        actionIcon: "🫧",
+        item: "手触りのいいふわふわポーチ",
+        itemIcon: "🧸",
+        spot: "お気に入りのパン屋さんやカフェの席",
+        spotIcon: "🥐",
+        luckyKey: "No. 6 / ミルキーピスタチオ"
+      },
+      gemini: {
+        crystalName: "レインボーフローライト & シトリン",
+        crystalEmoji: "🔮",
+        auraColorName: "レモンシャーベット & ライラック",
+        auraDot: "#a855f7",
+        crystalQuote: "「風のように軽やかな好奇心が、新しい扉を開く」",
+        headline: "頭のなかのモヤモヤが晴れて、楽しいひらめきが弾ける日",
+        whisper: "色んな人の会話に入ったり、SNSのタイムラインを追ううちに、情報過多で頭がパンパンになっていませんか？\n好奇心旺盛だからこそ、いろんなことに気がついて心が少し散らかってしまいがち。全部を処理しようとしなくて大丈夫だよ。",
+        prescription: "今日の合言葉は<strong>「おもしろい！と思ったこと1つだけに集中」</strong>！\nノートに好きなイラストや落書きをちょこっと描いてみたり、気になっていた動画を1本だけ見るのがおすすめ。あなたのひらめきは星屑のようにキラキラ光っています。",
+        action: "ノートのすみに小さく可愛い落書きをする",
+        actionIcon: "✏️",
+        item: "書き心地がなめらかなパステルペン",
+        itemIcon: "🖊️",
+        spot: "文房具屋さんや本屋さんの雑誌コーナー",
+        spotIcon: "📚",
+        luckyKey: "No. 5 / レモンイエロー"
+      },
+      cancer: {
+        crystalName: "ムーンストーン & パール",
+        crystalEmoji: "🌙",
+        auraColorName: "シフォンホワイト & パウダーブルー",
+        auraDot: "#38bdf8",
+        crystalQuote: "「繊細な優しさは、あなたを守るあたたかなシェル」",
+        headline: "誰かのためではなく、自分の心を一番に守ってあげる日",
+        whisper: "友達の元気がないことにすぐ気づいて心配になったり、「自分のせいで怒ってるのかな？」と気にしすぎていませんか？\nあなたは共感のアンテナがとっても高い、優しい心の持ち主。でも、相手の機嫌は相手のもの。あなたが背負わなくていいんだよ。",
+        prescription: "今日は<strong>「心のお部屋のドアをそっと閉めて、ひとりを楽しむ」</strong>が正解。\nおうちのお風呂で湯船にゆっくり浸かったり、ベッドの中で大好きなぬいぐるみをぎゅっと抱きしめて。「今日もよく頑張ったね」と自分をハグしてあげてね。",
+        action: "お風呂上がりに好きな音楽をスピーカーで流す",
+        actionIcon: "🛁",
+        item: "肌触りのやさしいモコモコ靴下",
+        itemIcon: "🧦",
+        spot: "自分の部屋のお気に入りのベッドの上",
+        spotIcon: "🛏️",
+        luckyKey: "No. 2 / ミルキームーン"
+      },
+      leo: {
+        crystalName: "サンストーン & ゴールデントパーズ",
+        crystalEmoji: "☀️",
+        auraColorName: "アプリコットサンシャイン & コーラル",
+        auraDot: "#f59e0b",
+        crystalQuote: "「あなたの笑顔は、周りの空気をパッと明るくする太陽」",
+        headline: "人知れず頑張ってきたあなたに、嬉しいご褒美が届く日",
+        whisper: "「しっかり者でいなきゃ」「弱音を吐いたらダサいかな」と、強がりのお面を被っていませんか？\n周りから頼りにされることが多いあなただけど、本当は誰かに『すごいね、頑張ってるね』って頭をポンポンされたい日もあるよね。",
+        prescription: "今日は誰かのヒーローをお休みして、<strong>「自分が主役のヒロインタイム」</strong>を過ごして！\nかわいいスイーツを堂々と買ったり、鏡に向かって思いっきり可愛い笑顔を作ってみて。あなたの誇り高い美しさは、誰が見てもピカイチです。",
+        action: "放課後にちょっとリッチな新作アイスを食べる",
+        actionIcon: "🍨",
+        item: "ゴールドのワンポイントチャーム",
+        itemIcon: "✨",
+        spot: "夕陽がキレイに見える階段の踊り場",
+        spotIcon: "🌅",
+        luckyKey: "No. 8 / サンセットゴールド"
+      },
+      virgo: {
+        crystalName: "サファイア & クリスタルクォーツ",
+        crystalEmoji: "💎",
+        auraColorName: "ペールミント & クリアラベンダー",
+        auraDot: "#10b981",
+        crystalQuote: "「澄んだ直感と誠実さが、迷いをリセットする」",
+        headline: "完璧じゃなくて大丈夫。『70点で大成功』の魔法をかける日",
+        whisper: "「ここがまだできてない」「もっとちゃんと計画通りにやらないと」と、自分へのダメ出しテストを毎日採点していませんか？\n丁寧で責任感があるからこそ、ちょっとしたミスが気になって心がチクチクしてしまうことがあります。",
+        prescription: "星からの処方箋は<strong>『まぁいっか！の魔法』</strong>。\n机の上をササッと1分だけ整えたら、あとは深呼吸してリラックス。あなたが今日学校に行って無事に帰ってきただけで、すでに120点満点のはなまるです！",
+        action: "机の上や筆箱の中をサッと1分だけ整理する",
+        actionIcon: "🧹",
+        item: "すっきり香るミントのタブレット",
+        itemIcon: "🌱",
+        spot: "静かで落ち着く図書館や学習室",
+        spotIcon: "📖",
+        luckyKey: "No. 4 / クリアミント"
+      },
+      libra: {
+        crystalName: "アクアマリン & ピンクトパーズ",
+        crystalEmoji: "🫧",
+        auraColorName: "マカロンピンク & パステルシアン",
+        auraDot: "#06b6d4",
+        crystalQuote: "「美しい調和とセンスが、ときめく出会いを呼ぶ」",
+        headline: "みんなの空気を読みすぎないで。あなたの『好き』を貫く日",
+        whisper: "「どっちでもいいよ〜」と周りの意見に合わせたり、みんなが楽しそうに見えて自分だけ取り残されているような孤独を感じていませんか？\n気配り上手な天秤座のあなただからこそ、自分の本当の『好き』を後回しにしちゃっているのかも。",
+        prescription: "今日は<strong>「直感で一番カワイイと思ったものを選ぶ」</strong>レッスン！\n服のコーディネートや放課後の寄り道先など、自分の心がきゅんとした方を選んでみて。あなたのセンスはいつでも最高に洗練されています。",
+        action: "スマホの待ち受け画面を好きな世界観に変える",
+        actionIcon: "📱",
+        item: "パステルカラーの可愛いリボンやシュシュ",
+        itemIcon: "🎀",
+        spot: "可愛いコスメやアクセサリーが並ぶ雑貨屋さん",
+        spotIcon: "💄",
+        luckyKey: "No. 7 / オーロラローズ"
+      },
+      scorpio: {
+        crystalName: "アメジスト & ロードライトガーネット",
+        crystalEmoji: "💜",
+        auraColorName: "ディープバイオレット & スモーキーピンク",
+        auraDot: "#7c3aed",
+        crystalQuote: "「秘めた情熱と強い絆が、本物の愛を育てる」",
+        headline: "言えない想いも宝物。自分の世界に深く潜って癒やす日",
+        whisper: "「この気持ち、誰にも分かってもらえないかも」「軽々しく話したくないな」と、胸の奥深くに大事な想いをしまっていませんか？\nあなたはとても一途で深い心の持ち主。浅いおしゃべりよりも、心から通じ合えるものを求めているはず。",
+        prescription: "無理に誰かに心を開こうとしなくて大丈夫。今日は<strong>「自分だけの秘密基地でチルする日」</strong>。\n好きな推しの動画に没頭したり、お気に入りの本や音楽に浸る時間を作って。あなたのミステリアスな魅力は、静かな夜にこそ輝きます。",
+        action: "イヤホンで大好きな推しの曲をじっくり聴く",
+        actionIcon: "🎧",
+        item: "パープル系の透け感ネイルやリップ",
+        itemIcon: "💅",
+        spot: "部屋の照明を落とした間接照明の空間",
+        spotIcon: "🕯️",
+        luckyKey: "No. 9 / トワイライトパープル"
+      },
+      sagittarius: {
+        crystalName: "ターコイズ & ラピスラズリ",
+        crystalEmoji: "🌌",
+        auraColorName: "スカイシフォン & レモンソーダ",
+        auraDot: "#0284c7",
+        crystalQuote: "「遠くの空を見上げる瞳が、自由な冒険を始める」",
+        headline: "退屈な枠を飛び出して、新しいワクワクに手を伸ばす日",
+        whisper: "毎日同じ学校の繰り返しに「なんだか退屈だな」「もっと広い世界に行きたいな」と、心がむずむずしていませんか？\n自由な旅人の魂を持つあなたにとって、狭い教室のルールや小さな噂話は窮屈に感じられて当然です。",
+        prescription: "小さな冒険があなたを救います！<strong>「いつもと違う道を通ってみる」</strong>だけで運気急上昇。\n新しい曲をディグったり、普段読まないジャンルの本を開いてみて。あなたの未来には、想像以上のまぶしい世界が広がっています。",
+        action: "帰り道にいつもと1本だけ違う角を曲がってみる",
+        actionIcon: "👟",
+        item: "星や天体がモチーフのキーホルダー",
+        itemIcon: "🌠",
+        spot: "空が広々と見渡せる駅のホームや屋上",
+        spotIcon: "🏙️",
+        luckyKey: "No. 3 / スカイブルー"
+      },
+      capricorn: {
+        crystalName: "スモーキークォーツ & アメジスト",
+        crystalEmoji: "🪐",
+        auraColorName: "カフェラテベージュ & ラベンダー",
+        auraDot: "#6b21a8",
+        crystalQuote: "「コツコツ積み重ねた努力が、静かに花開く」",
+        headline: "いつも真面目なあなたが、一番報われてほしい日",
+        whisper: "「もっと勉強しなきゃ」「結果を出さないと認めてもらえない」と、見えないプレッシャーと一人で戦っていませんか？\n誰も見ていないところでも努力を惜しまないあなた。本当に立派だし、お星さまはずっとそれを見ています。",
+        prescription: "今日は義務感をポイッ！<strong>「何もしない贅沢を自分にあげる日」</strong>。\nベッドでゴロゴロしながら漫画を読んだり、あたたかいココアを飲んでみて。『休むことも大切な前進』。肩の荷を下ろして深呼吸してね。",
+        action: "あたたかいミルクココアをゆっくり飲む",
+        actionIcon: "☕",
+        item: "手になじむシンプルな革調パスケース",
+        itemIcon: "🎫",
+        spot: "落ち着いた木漏れ日のある公園のベンチ",
+        spotIcon: "🌳",
+        luckyKey: "No. 8 / モカベージュ"
+      },
+      aquarius: {
+        crystalName: "セレスタイト & オーロラクォーツ",
+        crystalEmoji: "🛸",
+        auraColorName: "ネオンパステル & エレクトリックアイス",
+        auraDot: "#8b5cf6",
+        crystalQuote: "「普通じゃなくていい。唯一無二の個性が魔法になる」",
+        headline: "周りと違っていても大正解！自分らしさを誇らしく思う日",
+        whisper: "「私ってちょっと変わってるのかな？」「みんなのテンションに合わせるのがしんどいな」と感じたことはありませんか？\nあなたは未来の風を吹かせるクリエイター。みんなと同じ型にハマらないところにこそ、最高の輝きが宿っています。",
+        prescription: "無理して『普通』に拟態しなくて大丈夫！<strong>「自分の個性にとことん誇りを持つ日」</strong>。\n自分の好きなマニアックな話題やファッションを思いっきり楽しんで。あなたと話すと『世界が広がる！』って思っている人が必ずいます。",
+        action: "気になっていた新しいアプリや音楽を試す",
+        actionIcon: "💡",
+        item: "クリア素材のオーロラポーチやステッカー",
+        itemIcon: "🛸",
+        spot: "ユニークな雑貨が集まるセレクトショップ",
+        spotIcon: "🏬",
+        luckyKey: "No. 11 / ネオパステル"
+      },
+      pisces: {
+        crystalName: "アクアマリン & モルガナイト",
+        crystalEmoji: "🫧",
+        auraColorName: "マーメイドピンク & シーフォームグリーン",
+        auraDot: "#06b6d4",
+        crystalQuote: "「やさしい海のような感受性が、奇跡を引き寄せる」",
+        headline: "夢見がちなあなたのピュアな心が、最高の幸運を呼ぶ日",
+        whisper: "授業中にぼーっと空想の世界にトリップしてしまったり、人のちょっとしたトゲのある言葉に傷ついて泣きたくなっていませんか？\nあなたは心の中に無限のメルヘンと優しさを持っている、マーメイドのような女の子。その繊細さは宝物です。",
+        prescription: "現実の冷たいトゲから離れて、<strong>「心あたたまるメルヘンの世界に浸る日」</strong>。\nかわいいイラスト集を眺めたり、好きな映画を観て感動の涙を流すと、心の淀みがキレイに洗い流されます。ふわふわの幸せがもうすぐ届くよ。",
+        action: "寝る前にアロマやお気に入りの香りを枕にシュッとする",
+        actionIcon: "🌙",
+        item: "海の雫のようなキラキラしたガラスアクセ",
+        itemIcon: "🐬",
+        spot: "水族館や噴水のある水辺のスポット",
+        spotIcon: "⛲",
+        luckyKey: "No. 7 / マーメイドアクア"
+      }
+    };
+
+    /* ====================================================
+       2. Web Audio API による Lo-Fi BGM & きらめき効果音
+    ==================================================== */
+    class LofiSynthEngine {
+      constructor() {
+        this.ctx = null;
+        this.isPlaying = false;
+        this.timer = null;
+        this.step = 0;
+        this.chords = [
+          [349.23, 440.00, 523.25, 659.25], // FM7
+          [329.63, 392.00, 493.88, 587.33], // Em7
+          [293.66, 349.23, 440.00, 523.25], // Dm7
+          [261.63, 329.63, 392.00, 493.88]  // CM7
+        ];
+        this.sparkleNotes = [659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playPluck(freq, time, gainVal = 0.08, duration = 1.2) {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'triangle';
+        osc2.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+        osc2.frequency.setValueAtTime(freq * 1.002, time);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1400, time);
+        filter.frequency.exponentialRampToValueAtTime(400, time + duration);
+
+        gain.gain.setValueAtTime(0.0001, time);
+        gain.gain.linearRampToValueAtTime(gainVal, time + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+        osc.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(time);
+        osc2.start(time);
+        osc.stop(time + duration);
+        osc2.stop(time + duration);
+      }
+
+      playSparkleChime() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [880, 1046.50, 1318.51, 1760];
+        notes.forEach((freq, idx) => {
+          this.playPluck(freq, now + idx * 0.08, 0.07, 1.4);
+        });
+      }
+
+      start() {
+        this.init();
+        if (this.isPlaying) return;
+        this.isPlaying = true;
+        this.step = 0;
+        this.loop();
+      }
+
+      stop() {
+        this.isPlaying = false;
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+        }
+      }
+
+      loop() {
+        if (!this.isPlaying || !this.ctx) return;
+
+        const chordIdx = Math.floor(this.step / 4) % this.chords.length;
+        const currentChord = this.chords[chordIdx];
+        const now = this.ctx.currentTime;
+
+        if (this.step % 4 === 0) {
+          currentChord.forEach((freq, i) => {
+            this.playPluck(freq, now + i * 0.04, 0.055, 2.8);
+          });
+        }
+
+        if (Math.random() > 0.35) {
+          const randNote = this.sparkleNotes[Math.floor(Math.random() * this.sparkleNotes.length)];
+          this.playPluck(randNote, now + 0.1, 0.035, 1.6);
+        }
+
+        this.step++;
+        this.timer = setTimeout(() => this.loop(), 800);
+      }
+
+      toggle() {
+        if (this.isPlaying) {
+          this.stop();
+          return false;
+        } else {
+          this.start();
+          return true;
+        }
+      }
+    }
+
+    const lofiEngine = new LofiSynthEngine();
+
+    /* ====================================================
+       3. 今日のラッキーお守り壁紙コレクション（全5種）
+    ==================================================== */
+    const LUCKY_WALLPAPERS = [
+      {
+        id: "phone_charm",
+        name: "Y2K クリスタルガラケー & スターチャーム",
+        sub: "懐かしくて新しい、きらめくピンクの魔法",
+        msg: "あなたに届くすべての言葉が、優しい光でありますように✨",
+        src: "assets/wallpapers/wallpaper1_phone.jpg",
+        fileName: "SARA_Wallpaper_CrystalPhone.jpg"
+      },
+      {
+        id: "rainbow_jelly",
+        name: "パステルゼリーケーキ & ミニくまちゃん",
+        sub: "あまくて優しい、癒やしのティータイム",
+        msg: "疲れた日は自分をいっぱい甘やかして、ハッピーをチャージしてね🍰",
+        src: "assets/wallpapers/wallpaper2_jelly.jpg",
+        fileName: "SARA_Wallpaper_JellyCake.jpg"
+      },
+      {
+        id: "magic_wand",
+        name: "クリスタルハートの魔法ステッキ",
+        sub: "夢を叶える、きらめくピンクゴールド",
+        msg: "信じる心があれば、あなたの世界はいつでもキラキラ輝き出すよ🪄",
+        src: "assets/wallpapers/wallpaper3_wand.jpg",
+        fileName: "SARA_Wallpaper_MagicWand.jpg"
+      },
+      {
+        id: "aurora_gloss",
+        name: "オーロラホログラム・グロス",
+        sub: "光の角度で表情を変える、うるツヤの透明感",
+        msg: "どんな瞬間も、あなただけの特別な輝きを放っているよ🫧",
+        src: "assets/wallpapers/wallpaper4_gloss.jpg",
+        fileName: "SARA_Wallpaper_AuroraGloss.jpg"
+      },
+      {
+        id: "pastel_unicorn",
+        name: "パステルクラウド・ユニコーン",
+        sub: "夕暮れラベンダーの空を駆ける守護の聖獣",
+        msg: "外の雑音からあなたのピュアな心をふんわり包み込んで守るよ🦄",
+        src: "assets/wallpapers/wallpaper5_unicorn.png",
+        fileName: "SARA_Wallpaper_PastelUnicorn.png"
+      }
+    ];
+
+    let currentWallpaperIdx = 0;
+
+    function applyWallpaper(index) {
+      currentWallpaperIdx = index % LUCKY_WALLPAPERS.length;
+      const wp = LUCKY_WALLPAPERS[currentWallpaperIdx];
+      const img = document.getElementById("wallpaperPreviewImg");
+
+      img.style.opacity = "0.3";
+      img.style.transform = "scale(0.97)";
+
+      setTimeout(() => {
+        img.src = wp.src;
+        document.getElementById("wallpaperCardName").textContent = wp.name;
+        document.getElementById("wallpaperCardSub").textContent = wp.sub;
+        document.getElementById("wallpaperCardMsg").textContent = `「${wp.msg}」`;
+        img.style.opacity = "1";
+        img.style.transform = "scale(1)";
+      }, 140);
+    }
+
+    /* ====================================================
+       4. UI イベント ＆ 初期化
+    ==================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. 背景の動的バブル＆星屑生成
+      initBackgroundParticles();
+
+      // 2. 年月日セレクトボックスのセットアップ
+      setupDateSelectors();
+
+      // 3. 生まれた時間チップ選択
+      setupTimeOptions();
+
+      // 4. BGM トグル
+      setupLofiToggle();
+
+      // 5. 占うボタンの実行処理
+      setupFortuneAction();
+
+      // 6. 壁紙ダウンロード＆切り替え
+      setupWallpaperFeatures();
+
+      // 7. シェアボタン＆外部リンク
+      setupSocialActions();
+
+      // スマホプレビューの時計を現在時刻に合わせる
+      updatePhoneClock();
+      setInterval(updatePhoneClock, 30000);
+
+      // 初期壁紙の適用
+      applyWallpaper(0);
+    });
+
+    // 背景パーティクル生成
+    function initBackgroundParticles() {
+      const container = document.getElementById("bgParticles");
+      // 浮遊シャボン玉
+      for (let i = 0; i < 15; i++) {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        const size = Math.random() * 45 + 20;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${Math.random() * 100}%`;
+        bubble.style.animationDuration = `${Math.random() * 8 + 10}s`;
+        bubble.style.animationDelay = `${Math.random() * 8}s`;
+        container.appendChild(bubble);
+      }
+
+      // キラキラ星屑
+      const stars = ["✦", "✧", "⋆", "｡˚", "✨"];
+      for (let i = 0; i < 22; i++) {
+        const star = document.createElement("div");
+        star.className = "sparkle-star";
+        star.textContent = stars[Math.floor(Math.random() * stars.length)];
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        container.appendChild(star);
+      }
+    }
+
+    // 年月日セレクト
+    function setupDateSelectors() {
+      const yearSelect = document.getElementById("birthYear");
+      const monthSelect = document.getElementById("birthMonth");
+      const daySelect = document.getElementById("birthDay");
+
+      // 年: 1920年〜現在の年まで誰でも占えるよう幅広く対応
+      const currentYear = new Date().getFullYear();
+      const minYear = 1920;
+      const defaultYear = 2010;
+
+      for (let y = currentYear; y >= minYear; y--) {
+        const opt = document.createElement("option");
+        opt.value = y;
+        opt.textContent = `${y}年`;
+        if (y === defaultYear) opt.selected = true;
+        yearSelect.appendChild(opt);
+      }
+
+      // 月: 1〜12月
+      for (let m = 1; m <= 12; m++) {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = `${m}月`;
+        if (m === 9) opt.selected = true;
+        monthSelect.appendChild(opt);
+      }
+
+      // 日付更新関数
+      function updateDays() {
+        const y = parseInt(yearSelect.value);
+        const m = parseInt(monthSelect.value);
+        const prevDay = parseInt(daySelect.value) || 28;
+        const daysInMonth = new Date(y, m, 0).getDate();
+
+        daySelect.innerHTML = "";
+        for (let d = 1; d <= daysInMonth; d++) {
+          const opt = document.createElement("option");
+          opt.value = d;
+          opt.textContent = `${d}日`;
+          if (d === Math.min(prevDay, daysInMonth)) opt.selected = true;
+          daySelect.appendChild(opt);
+        }
+        updateZodiacPreview();
+      }
+
+      function updateZodiacPreview() {
+        const m = parseInt(monthSelect.value);
+        const d = parseInt(daySelect.value);
+        const zodiac = getZodiac(m, d);
+        document.getElementById("zodiacText").textContent = `あなたは ${zodiac.symbol} ${zodiac.name} だよ✨`;
+      }
+
+      yearSelect.addEventListener("change", updateDays);
+      monthSelect.addEventListener("change", updateDays);
+      daySelect.addEventListener("change", updateZodiacPreview);
+
+      updateDays();
+    }
+
+    // 生まれた時間
+    let selectedTime = "unknown";
+    function setupTimeOptions() {
+      const chips = document.querySelectorAll(".time-option-chip");
+      chips.forEach(chip => {
+        chip.addEventListener("click", () => {
+          lofiEngine.playPluck(1046.50, (lofiEngine.ctx ? lofiEngine.ctx.currentTime : 0), 0.04, 0.4);
+          chips.forEach(c => c.classList.remove("selected"));
+          chip.classList.add("selected");
+          selectedTime = chip.getAttribute("data-time");
+        });
+      });
+    }
+
+    // BGM トグル
+    function setupLofiToggle() {
+      const btn = document.getElementById("lofiToggleBtn");
+      btn.addEventListener("click", () => {
+        const isNowPlaying = lofiEngine.toggle();
+        if (isNowPlaying) {
+          btn.classList.add("playing");
+          showToast("🎧 放課後Lo-Fi BGMを再生中...♪");
+        } else {
+          btn.classList.remove("playing");
+          showToast("🎧 BGMを停止しました");
+        }
+      });
+    }
+
+    /* ====================================================
+       2. 生まれた時間帯別の星占いデータ
+       （朝・昼・夜・秘密それぞれの特性とメッセージ）
+    ==================================================== */
+    const TIME_INFLUENCE_DATA = {
+      morning: {
+        badgeText: "☀️ 朝生まれ（サンシャイン・ドーン）",
+        whisperPrefix: "【☀️ 朝生まれの星のささやき】\n夜明けの澄んだ光を浴びて生まれたあなたは、直感が鋭く、朝一番のスタートダッシュやひらめきに優れています。でもその反面、午前中にフルパワーでがんばりすぎて、午後になると「なんだか急に電池切れ...」と疲れがドッと押し寄せていませんか？\n\n",
+        prescriptionSuffix: "\n\n☀️<strong>【朝生まれの星の処方箋】</strong>\n午後は意識して「省エネ＆リラックスモード」にシフトしてOK！午前中に学校や日常をがんばった自分へ、放課後に美味しいドリンクをテイクアウトして、心にたっぷりハナマルをつけてあげてね。",
+        action: "午前中に頑張った自分へ、放課後に好きなジュースやカフェオレをご褒美にする",
+        actionIcon: "🧃",
+        item: "爽やかなフルーツや柑橘の香りのハンドクリーム",
+        itemIcon: "🍋",
+        spot: "朝の光や夕暮れのグラデーションが綺麗に見える窓際",
+        spotIcon: "🪟",
+        meterMods: [6, -2, 8, -4]
+      },
+      day: {
+        badgeText: "☁️ 昼生まれ（ハイヌーン・ブルーム）",
+        whisperPrefix: "【☁️ 昼生まれの星のささやき】\n太陽が一番高く輝く時間に生まれたあなたは、周りをパッと照らす豊かな共感力と社交性を持っています。でも、「みんなの前では明るくしっかり者でいなきゃ」「場の空気を壊したくない」と、無意識に周りの顔色をうかがって気を張り詰めていませんか？\n\n",
+        prescriptionSuffix: "\n\n☁️<strong>【昼生まれの星の処方箋】</strong>\n誰かの期待に応える前に、まずは「自分の心の心地よさ」を最優先にして！放課後は友達の輪から一歩離れて、誰にも気を使わない『自分だけの1人時間』を15分作って深呼吸してね。",
+        action: "放課後に寄り道して、気になっていた新作スイーツやパンをチェックする",
+        actionIcon: "🍰",
+        item: "ふんわり手触りのいいパステルカラーのハンカチやシュシュ",
+        itemIcon: "🎀",
+        spot: "甘い香りがするカフェやベーカリーの近く",
+        spotIcon: "🥐",
+        meterMods: [-2, 8, -2, 4]
+      },
+      night: {
+        badgeText: "⭐️ 夜生まれ（スターライト・トワイライト）",
+        whisperPrefix: "【⭐️ 夜生まれの星のささやき】\n静かな星空の下で生まれたあなたは、深い感受性とクリエイティブな感性を秘めたドリーマー。でも夜になると「今日のあの言い方、変じゃなかったかな...」と1人でぐるぐる夜の反省会を開いて、心がチクチク痛んでいませんか？\n\n",
+        prescriptionSuffix: "\n\n⭐️<strong>【夜生まれの星の処方箋】</strong>\n星からのお願いです！『夜のひとり反省会は即座に強制終了』！夜は悩む時間ではなく、好きな音楽や推しの世界にどっぷり浸かって、自分の美しい心を満たす時間にしてくださいね。",
+        action: "部屋の照明を少し落として、大好きなチル曲をイヤホンでじっくり聴く",
+        actionIcon: "🎧",
+        item: "星や月がモチーフのキラキラしたアクセサリーやチャーム",
+        itemIcon: "🌙",
+        spot: "夕暮れから星が見え始める静かな帰り道や自室のベッド",
+        spotIcon: "🌌",
+        meterMods: [8, -3, 6, 2]
+      },
+      unknown: {
+        badgeText: "🌙 月の秘密（ミスティック・ドリーム）",
+        whisperPrefix: "【🌙 月のヴェールを持つあなたへ・星のささやき】\n生まれた時間が秘密（または未定）のあなたは、型にはまらない自由なスピリットと、どんな色にも染まれる無限の可能性を持っています。「自分ってどんな人なんだろう？」と心が揺れる日があっても大丈夫。あなたはこれからどんな自分にだってなれます。\n\n",
+        prescriptionSuffix: "\n\n🌙<strong>【月のヴェールの星の処方箋】</strong>\n周りの枠にとらわれず、「なんとなく好き」「ピンときた」という直感をとことん信じてみて。あなたのミステリアスな魅力は、型にはまらない自由さの中にこそ宿っています。",
+        action: "直感でピンときた本や動画を1つだけ開いてみる",
+        actionIcon: "🔮",
+        item: "オーロラカラーの透明ポーチやきらめくステッカー",
+        itemIcon: "🫧",
+        spot: "本屋さんや雑貨屋さんの静かな棚の前",
+        spotIcon: "📚",
+        meterMods: [4, 4, 4, 6]
+      }
+    };
+
+    // 占う実行
+    function setupFortuneAction() {
+      const btn = document.getElementById("fortuneBtn");
+      const loading = document.getElementById("crystalLoading");
+      const resultSec = document.getElementById("resultSection");
+      const inputCard = document.getElementById("inputCard");
+      const retryLink = document.getElementById("retryLink");
+
+      btn.addEventListener("click", () => {
+        // 効果音再生
+        lofiEngine.playSparkleChime();
+
+        // 入力値取得
+        const y = parseInt(document.getElementById("birthYear").value);
+        const m = parseInt(document.getElementById("birthMonth").value);
+        const d = parseInt(document.getElementById("birthDay").value);
+
+        // 演出：ローディング表示
+        inputCard.style.display = "none";
+        loading.style.display = "flex";
+        resultSec.style.display = "none";
+
+        // 少し上にスクロール
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+
+        setTimeout(() => {
+          // 星座判定
+          const zodiac = getZodiac(m, d);
+          const data = FORTUNE_DATABASE[zodiac.id] || FORTUNE_DATABASE.aries;
+
+          // 生まれた時間帯の特性取得
+          const timeInfo = TIME_INFLUENCE_DATA[selectedTime] || TIME_INFLUENCE_DATA.unknown;
+          document.getElementById("timeAuraBadge").textContent = timeInfo.badgeText;
+
+          // シード値計算（時間帯ボーナスを加算して壁紙や数値のランダム性に影響）
+          const today = new Date();
+          const dayHash = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+          const timeBonus = selectedTime === "morning" ? 111 : selectedTime === "day" ? 222 : selectedTime === "night" ? 333 : 444;
+          const seed = y * 13 + m * 31 + d + timeBonus + dayHash;
+
+          // UIへ結果反映
+          document.getElementById("resultMainHeadline").textContent = data.headline;
+          document.getElementById("crystalName").textContent = data.crystalName;
+          document.getElementById("crystalBadgeEmoji").textContent = data.crystalEmoji;
+          document.getElementById("crystalQuote").textContent = data.crystalQuote;
+          document.getElementById("auraColorName").textContent = data.auraColorName;
+          document.getElementById("auraDot").style.background = data.auraDot;
+
+          // 時間帯ごとの心境＆処方箋を合成
+          document.getElementById("whisperText").innerHTML = `${timeInfo.whisperPrefix}${data.whisper}`;
+          document.getElementById("prescriptionText").innerHTML = `${data.prescription}${timeInfo.prescriptionSuffix}`;
+
+          // 時間帯に合わせたラッキーアクション＆アイテム
+          document.getElementById("luckyAction").textContent = timeInfo.action;
+          document.getElementById("actionIcon").textContent = timeInfo.actionIcon;
+          document.getElementById("luckyItem").textContent = timeInfo.item;
+          document.getElementById("itemIcon").textContent = timeInfo.itemIcon;
+          document.getElementById("luckySpot").textContent = timeInfo.spot;
+          document.getElementById("spotIcon").textContent = timeInfo.spotIcon;
+          document.getElementById("luckyKey").textContent = data.luckyKey;
+
+          // オーラメーターのアニメーション（時間帯モディファイアを付与）
+          const val1 = Math.min(99, Math.max(65, 80 + (Math.abs(seed) % 15) + timeInfo.meterMods[0]));
+          const val2 = Math.min(99, Math.max(65, 78 + (Math.abs(seed * 3) % 15) + timeInfo.meterMods[1]));
+          const val3 = Math.min(99, Math.max(65, 82 + (Math.abs(seed * 5) % 13) + timeInfo.meterMods[2]));
+          const val4 = Math.min(99, Math.max(65, 75 + (Math.abs(seed * 7) % 18) + timeInfo.meterMods[3]));
+
+          document.getElementById("meterVal1").textContent = `${val1}%`;
+          document.getElementById("meterVal2").textContent = `${val2}%`;
+          document.getElementById("meterVal3").textContent = `${val3}%`;
+          document.getElementById("meterVal4").textContent = `${val4}%`;
+
+          // 今日のラッキーお守り壁紙をランダム選出
+          currentWallpaperIdx = Math.abs(seed) % LUCKY_WALLPAPERS.length;
+          applyWallpaper(currentWallpaperIdx);
+
+          // ローディング終了、結果表示
+          loading.style.display = "none";
+          resultSec.style.display = "flex";
+
+          setTimeout(() => {
+            document.getElementById("meterBar1").style.width = `${val1}%`;
+            document.getElementById("meterBar2").style.width = `${val2}%`;
+            document.getElementById("meterBar3").style.width = `${val3}%`;
+            document.getElementById("meterBar4").style.width = `${val4}%`;
+          }, 100);
+
+          showToast("✨ 今日の星のお守りメッセージが届きました！");
+        }, 1300);
+      });
+
+      retryLink.addEventListener("click", () => {
+        lofiEngine.playPluck(880, (lofiEngine.ctx ? lofiEngine.ctx.currentTime : 0), 0.04, 0.4);
+        resultSec.style.display = "none";
+        inputCard.style.display = "block";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // 壁紙機能（ダウンロード）
+    function setupWallpaperFeatures() {
+      const downloadBtn = document.getElementById("downloadWallpaperBtn");
+
+      downloadBtn.addEventListener("click", () => {
+        lofiEngine.playSparkleChime();
+        const wp = LUCKY_WALLPAPERS[currentWallpaperIdx];
+        const link = document.createElement("a");
+        link.href = wp.src;
+        link.download = wp.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("💎 お守り壁紙を保存しました！ロック画面に設定してね✨");
+      });
+    }
+
+    // スマホプレビュー用時計の表示
+    function updatePhoneClock() {
+      const now = new Date();
+      const days = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+      const dateText = `${now.getMonth() + 1}月${now.getDate()}日 ${days[now.getDay()]}`;
+      const hours = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+
+      const dateEl = document.getElementById("phoneMockupDate");
+      const timeEl = document.getElementById("phoneMockupTime");
+      if (dateEl) dateEl.textContent = dateText;
+      if (timeEl) timeEl.textContent = `${hours}:${mins}`;
+    }
+
+    // ソーシャル＆シェア機能
+    function setupSocialActions() {
+      const shareBtn = document.getElementById("shareBtn");
+      shareBtn.addEventListener("click", async () => {
+        lofiEngine.playSparkleChime();
+        const shareData = {
+          title: "SARA's クリスタル星占い 🔮✨",
+          text: "放課後のお守りメッセージと可愛い限定スマホ壁紙が届くよ🫧 今日の運勢を占ってみてね！",
+          url: window.location.href
+        };
+
+        if (navigator.share) {
+          try {
+            await navigator.share(shareData);
+            showToast("💌 シェア画面を開きました！");
+          } catch (err) {
+            copyShareText(shareData.text);
+          }
+        } else {
+          copyShareText(shareData.text);
+        }
+      });
+
+      function copyShareText(text) {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(`${text}\n${window.location.href}`);
+          showToast("📋 占いのメッセージをクリップボードにコピーしました！");
+        } else {
+          showToast("💌 LINEやXで友達に教えてあげてね！");
+        }
+      }
+    }
+
+    // トースト通知表示
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toastPopup");
+      const msgEl = document.getElementById("toastMsg");
+      msgEl.textContent = msg;
+      toast.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
